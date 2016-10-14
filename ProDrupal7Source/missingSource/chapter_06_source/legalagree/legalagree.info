@@ -1,0 +1,7 @@
+; $Id$
+name = Legal Agreement
+description = Displays a dubious legal agreement during user registration.
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[] = legalagree.module

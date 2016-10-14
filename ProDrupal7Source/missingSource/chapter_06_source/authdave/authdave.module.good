@@ -1,0 +1,79 @@
+<?php
+
+/*
+// $Id$
+
+/**
+ * Implementation of hook_form_alter().
+ * We replace the local login validation handler with our own.
+ */
+function authdave_form_alter(&$form, &$form_state, $form_id) {
+  // In this simple example we authenticate on username only,
+  // so password is not a required field. But we leave it in
+  // in case another module needs it.
+  if ($form_id == 'user_login' || $form_id == 'user_login_block') {
+    $form['pass']['#required'] = FALSE;
+
+    // If the user login form is being submitted, add our validation handler.
+    if (isset($form_state['input']['name'])) {
+      // Find the local validation function's entry so we can replace it.
+      $array_key = array_search('user_login_authenticate_validate',
+        $form['#validate']);
+
+      if ($array_key === FALSE) {
+        // Could not find it. Some other module must have run form_alter().
+        // We will simply add our validation just before the final validator.
+        $final_validator = array_pop($form['#validate']);
+        $form['#validate'][] = 'authdave_login_validate';
+        $form['#validate'][] = $final_validator;
+      }
+      else {
+        // Found the local validation function. Replace with ours.
+        $form['#validate'][$array_key] = 'authdave_login_validate';
+      }
+    }
+  }
+}
+
+/**
+ * Form validation handler.
+ */
+function authdave_login_validate($form, &$form_state) {
+  global $user;
+  if (!empty($user->uid)) {
+    // Another module has already handled authentication.
+    return;
+  }
+  // Call our custom authentication function.
+  if (!authdave_authenticate($form_state['values'])) {
+    // Authentication failed; username did not begin with 'dave'.
+    form_set_error('name', t('Unrecognized username.'));
+  }
+}
+
+/**
+ * Custom authentication function. This could be much more complicated,
+ * checking an external database, LDAP, etc.
+ */
+function authdave_authenticate($form_values) {
+  global $authdave_authenticated;
+  $username = $form_values['name'];
+  
+ if (substr(drupal_strtolower($username), 0, 4) == 'dave') {
+    // Log user in, or register new user if not already present.
+    user_external_login_register($username, 'authdave');
+
+    // Write session, update timestamp, run user 'login' hook.
+    user_authenticate_finalize($form_state['values']);
+    // Use a global variable to save the fact that we did authentication.
+    // (See use of this global in hook_user() implementation of next
+    // code listing.)
+    $authdave_authenticated = TRUE;
+    return TRUE;
+  }
+  else {
+    // Not a Dave.
+    return FALSE;
+  }
+}
+*/

@@ -1,0 +1,61 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_form_alter().
+ * We replace the local login validation handler with our own.
+ */
+function authdave_form_alter(&$form, &$form_state, $form_id) {
+  // In this simple example we authenticate on username to see whether starts with dave
+  if ($form_id == 'user_login' || $form_id == 'user_login_block') {
+
+    #form['pass']['#required'] = FALSE;
+    
+    if (isset($form_state['input']['name'])){
+
+       $array_key = array_search('user_login_authenticate_validate', $form['#validate']);
+
+       if ($array_key === FALSE) { 
+          $final_validator = array_pop($form['#validate']);
+          $form['#validate'][] = 'authdave_user_form_validate';        
+          $form['#validate'][] = $final_validator;
+       } else { 
+          $form['#validate'][$array_key] = 'authdave_user_form_validate';
+       }
+    }  
+  }
+}
+
+/**
+ * Custom form validation function
+ */
+function authdave_user_form_validate($form, &$form_state) {
+
+  return TRUE;
+
+/*
+  if (!authdave_authenticate($form_state)) { 
+      form_set_error('name', t('Sorry only Daves are allowed on this site.'));
+  } else { 
+    user_login_register($username, 'authdave'); 
+  }
+  */
+    
+}
+
+/**
+ * Custom user authentication function 
+ */
+function authdave_authenticate($form_state) { 
+/*
+  $username = $form_state['input']['name'];
+  $testname = substr(drupal_strtolower($username),0,4);
+      
+  if ($testname == "dave" || $testname == "admi") {
+    return TRUE    
+  } else {
+    // not a Dave 
+    return FALSE;
+  }  
+  */
+}

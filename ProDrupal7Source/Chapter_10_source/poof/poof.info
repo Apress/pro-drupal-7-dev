@@ -1,0 +1,7 @@
+; $Id$
+name = Poof
+description = Demonstrates AHAH forms.
+package = Pro Drupal Development
+core = 7.x
+version=VERSION
+files[] = poof.module

@@ -1,0 +1,103 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * A silly module to assist whizbang novelists who are in a rut by providing a
+ * random sentence generator for their posts.
+ */
+
+/**
+* Implement hook_filter_info().
+*/
+function creativejuice_filter_info() {
+  $filters = array();
+  $filters['creativejuice'] = array(
+    'title' => t('Creative Juice filter'),
+    'description' => t('Enables users to insert random sentences into their post'),
+    'process callback' => '_creativejuice_filter_process',
+    'tips callback' => '_creativejuice_filter_tips',
+  );
+  return $filters;
+}
+
+/**
+ * Creativejuice filter process callback
+ *
+ * The actual filtering is performed here. The supplied text should be
+ * returned, once any necessary substitutions have taken place.
+ */
+function _creativejuice_filter_process($text, $filter, $format) {
+  while (strpos($text, '[juice!]') !== FALSE) {
+    $sentence = creativejuice_sentence(); 
+    $text = preg_replace('&\[juice!\]&', $sentence, $text, 1);
+  }
+  return $text;
+}
+
+/**
+ * Generate a random sentence.
+ */
+function creativejuice_sentence() {
+  $beginnings = array();
+  $beginnings[] = t('A majority of us believe');
+  $beginnings[] = t('Generally speaking,');
+  $beginnings[] = t('As times carry on');
+  $beginnings[] = t('Barren in intellect,');
+  $beginnings[] = t('Deficient in insight,');
+  $beginnings[] = t('As blazing blue sky pours down torrents of light,');
+  $beginnings[] = t('Aloof from the motley throng,');
+  $beginnings[] = t('While crafting a new Drupal module,');
+
+  $middles = array();
+  $middles[] = t('life flowed in its accustomed stream');
+  $middles[] = t('he ransacked the vocabulary');
+  $middles[] = t('the grimaces and caperings of buffoonery sting');
+  $middles[] = t('the mind freezes at the thought');
+  $middles[] = t('reverting to another matter enables freedom');
+  $middles[] = t('he lived as modestly as a hermit');
+  $middles[] = t('the coder repeatedly invoked hooks');
+
+  $ends = array();
+  $ends[] = t('through the red tape of officialdom.');
+  $ends[] = t('as it set anew in some fresh and appealing form.');
+  $ends[] = t('supported by evidence.');
+  $ends[] = t('as fatal as the fang of the most venomous snake.');
+  $ends[] = t('as full of spirit as a gray squirrel.');
+  $ends[] = t('as dumb as a fish.');
+  $ends[] = t('like a damp-handed auctioneer.');
+  $ends[] = t('like a bald ferret.');
+  $ends[] = t('with a frozen, sharpened badger.');
+  $ends[] = t('and achieve CMS nirvanna.');
+
+  // For every phrase group, pick a random value.
+  $sentence = array(
+    $beginnings[mt_rand(0, count($beginnings) - 1)],
+    $middles[mt_rand(0, count($middles) - 1)],
+    $ends[mt_rand(0, count($ends) - 1)],
+  );
+
+  // Take the three random values from the sentence groups,
+  // implode them together, and return the sentence.
+  return implode(' ', $sentence);
+}
+
+/**
+ * Implementation of hook_filter_tips().
+ */
+function _creativejuice_filter_tips($delta, $format, $long = FALSE) {
+  if ($long) {
+    // Detailed explanation for http://example.com/?q=filter/tips page.
+    return t('The Creative Juice filter is for those times when your
+      brain is incapable of being creative. These times come for everyone,
+      when even strong coffee and a barrel of jelly beans do not
+      create the desired effect. When that happens, you can simply enter
+      the [juice!] tag into your posts...'
+    );
+  }
+  else {
+    // Short explanation for underneath a post's textarea.
+    return t('Insert a random sentence into your post with the [juice!] tag.');
+  }
+}
+

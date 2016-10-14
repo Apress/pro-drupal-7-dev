@@ -1,0 +1,43 @@
+<?php
+
+/**
+* @file
+* Search interface for URL aliases.
+*/
+
+/**
+* Implementation of hook_search_info()
+*/
+function pathfinder_search_info() {
+  return array(  
+    'title' => 'URL Aliases',
+  );
+}
+
+/**
+* Implements hook_search_access().
+*/
+function pathfinder_search_access() {
+  return user_access('administer url aliases');
+}
+
+/**
+* Implements hook_search_execute().
+*/
+function pathfinder_search_execute($keys = NULL) {
+  $find = array();
+  $query = db_select('url_alias')->extend('PagerDefault');
+  $query->fields('url_alias', array('source', 'alias'));
+  $query->condition('alias', '%' . db_like($keys) . '%', 'LIKE');
+  $result = $query
+    ->limit(15)
+    ->execute();
+
+  foreach ($result as $alias) {
+    $find[] = array('title' => $alias->alias, 'link' => url($alias->source,
+      array('absolute' => TRUE)));
+    }
+    
+  return $find;
+
+}

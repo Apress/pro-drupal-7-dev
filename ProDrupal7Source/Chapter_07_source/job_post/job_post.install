@@ -1,0 +1,114 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Install file for Job Post module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * - Add the body field.
+ * - Configure the body field.
+ * - Create the company name field.
+ */
+function job_post_install() {
+  node_types_rebuild();
+  $types = node_type_get_types();
+  node_add_body_field($types['job_post']);
+
+  // Load the instance definition for our content type's body
+  $body_instance = field_info_instance('node', 'body', 'job_post');
+
+  // Add our example_node_list view mode to the body instance display by
+  $body_instance['type'] = 'text_summary_or_trimmed';
+
+  // Save our changes to the body field instance.
+  field_update_instance($body_instance);
+
+  // Create all the fields we are adding to our content type.
+  foreach (_job_post_installed_fields() as $field) {
+    field_create_field($field);
+  }
+
+  // Create all the instances for our fields.
+  foreach (_job_post_installed_instances() as $instance) {
+    $instance['entity_type'] = 'node';
+    $instance['bundle'] = 'job_post';
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Return a structured array defining the fields created by this content type.
+ */
+function _job_post_installed_fields() {
+  $t = get_t();
+  return array(
+    'job_post_company' => array(
+      'field_name'  => 'job_post_company',
+      'label'       => $t('Company posting the job listing'),
+      'type'        => 'text',
+    ),
+  );
+}
+
+/**
+ * Return a structured array defining the instances for this content type.
+ */
+function _job_post_installed_instances() {
+  $t = get_t();
+  return array(
+    'job_post_company' => array(
+      'field_name'  => 'job_post_company',
+      'type'        => 'text',
+      'label'       => $t('Company posting the job listing'),
+      'widget'      => array(
+        'type'    => 'text_textfield',
+      ),
+      'display' => array(
+        'example_node_list' => array(
+          'label'       => $t('Company posting the job listing'),
+          'type' => 'text',
+        ),
+      ),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function job_post_uninstall() {
+  // Gather all the example content that might have been created while this
+  // module was enabled.  
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'job_post'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+
+  // Delete all the nodes at once
+  node_delete_multiple($nids);
+
+  // Loop over each of the fields defined by this module and delete
+  // all instances of the field, their data, and the field itself.
+  foreach (array_keys(_job_post_installed_fields()) as $field) {
+    field_delete_field($field);
+  }
+
+  // Loop over any remaining field instances attached to the job_post
+  // content type (such as the body field) and delete them individually.
+  $instances = field_info_instances('node', 'job_post');
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+
+  // Delete our content type
+  node_type_delete('job_post');
+
+  // Purge all field infromation
+  field_purge_batch(1000);
+}

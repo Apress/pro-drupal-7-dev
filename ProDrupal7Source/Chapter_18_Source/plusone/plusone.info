@@ -1,0 +1,7 @@
+name = Plus One
+description = "A +1 voting widget for nodes. "
+package = Pro Drupal Development
+core = 7.x
+files[]=plusone.module
+files[]=plusone.install
+files[] = plusone.js

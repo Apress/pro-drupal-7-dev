@@ -1,0 +1,7 @@
+;$Id$
+name = Remote Hello
+description = Greets XML-RPC clients by name.
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[] = remotehello.module

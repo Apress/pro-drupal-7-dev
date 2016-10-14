@@ -1,0 +1,74 @@
+<?php
+
+
+/**
+* Implementation of hook_install().
+*/
+function legacysearch_install() {
+
+  $fields = array('id' => 1, 'title' => 'Web 1.0 Emulator', 'note' => '<p>This handy
+    product lets you emulate the blink tag but in hardware...a perfect gift.</p>',
+    'last_modified' => 1172502517);
+    
+  db_insert('technote')
+    ->fields($fields)
+    ->execute();
+
+  $fields = array('id' => 2, 'title' => 'Squishy Debugger', 'note' => '<p>Fully
+    functional debugger inside a squishy gel case. The embedded ARM processor heats
+    up...</p>', 'last_modified' => 1172502517);
+
+  db_insert('technote')
+    ->fields($fields)
+    ->execute();
+    
+}
+
+/**
+* Implementation of hook_uninstall().
+*/
+
+function legacysearch_uninstall() {
+  drupal_uninstall_schema('legacysearch');
+}
+
+/**
+* Implementation of hook_schema().
+*/
+function legacysearch_schema() {
+
+  $schema['technote'] = array(
+    'description' => t('A database with some example records.'),
+    'fields' => array(
+      'id' => array(
+      'type' => 'serial',
+      'not null' => TRUE,
+      'description' => t("The tech note's primary ID."),
+    ),
+
+   'title' => array(
+      'type' => 'varchar',
+      'length' => 255,
+      'description' => t("The tech note's title."),
+    ),
+
+   'note' => array(
+      'type' => 'text',
+      'description' => t('Actual text of tech note.'),
+    ),
+
+   'last_modified' => array(
+     'type' => 'int',
+     'unsigned' => TRUE,
+     'description' => t('Unix timestamp of last modification.'),
+    ),
+  
+  ),
+  
+  'primary key' => array('id'),
+
+  );
+
+return $schema;
+
+}

@@ -1,0 +1,8 @@
+; $Id$
+name = Job Post
+description = A job posting content type
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[] = job_post.install
+files[] = job_post.module

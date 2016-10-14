@@ -1,0 +1,140 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Play with the Form API.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function formexample_menu() {
+  $items['formexample'] = array(
+    'title' => 'View the sample form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('formexample_nameform'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM
+  );
+  return $items;
+}
+
+/**
+ * Define a form.
+ */
+function formexample_nameform() {
+
+  $form['name'] = array(
+    '#title' => t('Your Name'),
+    '#type' => 'fieldset',
+    '#description' => t('What people call you.')
+  );
+  $form['name']['user_name'] = array(
+    '#title' => t('Your Name'),
+    '#type' => 'textfield',
+    '#description' => t('Please enter your name.')
+  );
+  
+  $form['color'] = array(
+    '#prefix' => '<hr />',
+    '#title' => t('Color'),
+    '#type' => 'fieldset',
+    '#suffix' => '<div class="privacy-warning">' .
+      t('This information will be displayed publicly!') . '</div>',
+  );
+
+  $form['color_options'] = array(
+    '#type' => 'value',
+    '#value' => array(t('red'), t('green'), t('blue'))
+  );
+  $form['color']['favorite_color'] = array(
+    '#title' => t('Favorite Color'),
+    '#type' => 'select',
+    '#description' => t('Please select your favorite color.'),
+    '#options' => $form['color_options']['#value']
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit')
+  );
+  return $form;
+}
+
+
+/**
+ * Validate the form.
+ */
+function formexample_nameform_validate($form, &$form_state) {
+  if ($form_state['values']['user_name'] == 'King Kong') {
+    // We notify the form API that this field has failed validation.
+    form_set_error('user_name',
+      t('King Kong is not allowed to use this form.'));
+  }
+}
+
+/**
+ * Handle post-validation form submission.
+ */
+function formexample_nameform_submit($form_id, $form_state) {
+  $name = $form_state['values']['user_name'];
+  $color_key = $form_state['values']['favorite_color'];
+  $color = $form_state['values']['color_options'][$color_key];
+
+  drupal_set_message(t('%name loves the color %color!',
+    array('%name' => $name, '%color' => $color)));    
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function formexample_theme() {
+  return array(
+    'formexample_nameform' => array(
+      'render element' => 'form',
+      'template' => 'formexample-nameform',
+    ),
+  );
+}
+
+
+/**
+ * Assign the elements of the form to variables to 
+ * the themer can use those values to control how the 
+ * form elements are displayed, or alternatively
+ * displaying the whole form as constructed above
+ */
+function template_preprocess_formexample_nameform(&$variables) {
+
+  $variables['formexample_nameform'] = array();
+  $hidden = array();
+  // Provide variables named after form keys so themers can print each element independently.
+  foreach (element_children($variables['form']) as $key) {
+    $type = $variables['form'][$key]['#type'];
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables['formexample_nameform'][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  // Hidden form elements have no value to themers. No need for separation.
+  $variables['formexample_nameform']['hidden'] = implode($hidden);
+  // Collect all form elements to make it easier to print the whole form.
+  $variables['formexample_nameform_form'] = implode($variables['formexample_nameform']);
+}
+
+
+
+
+function formexample_form_user_login_block_alter(&$form, &$form_state, $form_id) {
+  // This code gets called for every form Drupal builds; use an if statement
+  // to respond only to the user login block and user login forms.
+  if ($form_id == 'user_login_block' || $form_id == 'user_login') {
+    // Change 'Log in' to 'Sign in'.
+      $form['actions']['submit']['#value'] = t('Sign in');
+  }
+}
+
+

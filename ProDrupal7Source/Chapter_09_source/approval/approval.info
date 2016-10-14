@@ -1,0 +1,7 @@
+;$Id$
+name = Approval
+description = Blocks for facilitating pending content workflow.
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[] = approval.module

@@ -1,0 +1,93 @@
+<?php
+
+// $Id$
+
+/**
+ * @file
+ * A silly module to assist whizbang novelists who are in a rut by providing a
+ * random sentence generator for their posts.
+ */
+
+ 
+/**
+* Implement hook_filter_info().
+*/
+function creativejuice_filter_info() {
+  $filters = array();
+  $filters['creativejuice'] = array(
+    'title' => t('Creative Juice filter'),
+    'description' => t('Enables users to insert random sentences into their post'),
+    'process callback' => '_creativejuice_filter_process',
+    'tips callback' => '_creativejuice_filter_tips',
+  );
+  return $filters;
+}
+
+
+/**
+ * Filter tips callback for creative juice filter.
+ *
+ * The tips callback allows filters to provide help text to users during the content
+ * editing process. Short tips are provided on the content editing screen, while
+ * long tips are provided on a separate linked page. Short tips are optional,
+ * but long tips are highly recommended.
+ */
+function _creativejuice_filter_tips($filter, $format, $long = FALSE) {
+  return t('<em>[creativejuice]</em> is replaced with the random sentences.');
+}
+
+
+
+/**
+ * Creativejuice filter process callback
+ *
+ * The actual filtering is performed here. The supplied text should be
+ * returned, once any necessary substitutions have taken place.
+ */
+function _creativejuice_filter_process($text, $filter, $format) {
+  $replacement = creativejuice_sentence(); 
+  return str_replace('[juice!]', $replacement, $text);
+}
+
+
+/**
+ * Creative juice helper function - returns a random sentence
+ *
+ */
+ 
+function creativejuice_sentence() {
+  $phrase[0][] = t('A majority of us believe');
+  $phrase[0][] = t('Generally speaking,');
+  $phrase[0][] = t('As times carry on');
+  $phrase[0][] = t('Barren in intellect,');
+  $phrase[0][] = t('Deficient in insight,');
+  $phrase[0][] = t('As blazing blue sky poured down torrents of light,');
+  $phrase[0][] = t('Aloof from the motley throng,');
+  
+  $phrase[1][] = t('life flowed in its accustomed stream');
+  $phrase[1][] = t('he ransacked the vocabulary');
+  $phrase[1][] = t('the grimaces and caperings of buffoonery');
+  $phrase[1][] = t('the mind freezes at the thought');
+  $phrase[1][] = t('reverting to another matter');
+  $phrase[1][] = t('he lived as modestly as a hermit');
+  
+  $phrase[2][] = t('through the red tape of officialdom.');
+  $phrase[2][] = t('as it set anew in some fresh and appealing form.');
+  $phrase[2][] = t('supported by evidence.');
+  $phrase[2][] = t('as fatal as the fang of the most venomous snake.');
+  $phrase[2][] = t('as full of spirit as a gray squirrel.');
+  $phrase[2][] = t('as dumb as a fish.');
+  $phrase[2][] = t('like a damp-handed auctioneer.');
+  $phrase[2][] = t('like a bald ferret.');
+  
+  foreach ($phrase as $key => $value) {
+    $rand_key = array_rand($phrase[$key]);
+    $sentence[] = $phrase[$key][$rand_key];
+  }
+  
+  return implode(' ', $sentence);
+
+ 
+ }
+
+

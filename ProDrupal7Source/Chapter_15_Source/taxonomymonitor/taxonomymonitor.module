@@ -1,0 +1,62 @@
+<?php
+
+// $Id$
+
+/**
+ * @file
+ * A module that emails a person when taxonomy changes
+ */
+
+/**
+ * Implementation of hook_term_insert()
+ */  
+ function taxonomymonitor_term_insert($term) {
+    _send_notification('term', 'added', $term->name); 
+ }
+ 
+/**
+ * Implementation of hook_term_update()
+ */  
+ function taxonomymonitor_term_update($term) { 
+    _send_notification('term', 'updated', $term->name);  
+ }
+
+/**
+ * Implementation of hook_term_delete()
+ */  
+function taxonomymonitor_term_delete($term) { 
+    _send_notification('term', 'deleted', $term->name);  
+ }
+ 
+/**
+ * Implementation of hook_vocabulary_insert()
+ */  
+ function taxonomymonitor_vocabulary_insert($vocabulary) { 
+    _send_notification('vocabulary', 'added', $vocabulary->name);  
+ }
+ 
+/**
+ * Implementation of hook_vocabulary_update()
+ */  
+ function taxonomymonitor_vocabulary_update($vocabulary) { 
+    _send_notification('vocabulary', 'updated', $vocabulary->name);   
+ }
+ 
+/**
+ * Implementation of hook_vocabulary_delete()
+ */  
+ function taxonomymonitor_vocabulary_delete($vocabulary) { 
+    _send_notification('vocabulary', 'deleted', $vocabulary->name);   
+ }
+ 
+/**
+ * Log changes to taxonomy using watchdog and send out an email notification
+ * describing the change
+ */  
+ function _send_notification($type, $action, $name) { 
+    watchdog("Taxonomy Monitor", "A $type named $name was $action", $variables=array(), $severity=WATCHDOGNOTICE, $link=NULL);
+    $to = "me@example.com";
+    $subject = "There was a change to taxonomy";
+    $body = "A $type named $name was $action";
+    drupal_mail('taxonomymonitor', $to, $subject, $body);
+ }

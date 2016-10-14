@@ -1,0 +1,6 @@
+name = Legacy Search
+description = Example of indexing/searching external content with Drupal.
+package = Pro Drupal Development
+core = 7.x
+files[] = legacysearch.install
+files[] = legacysearch.module

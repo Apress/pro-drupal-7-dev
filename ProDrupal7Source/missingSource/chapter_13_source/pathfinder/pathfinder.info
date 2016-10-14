@@ -1,0 +1,6 @@
+name = Pathfinder
+description = Gives administrators the ability to search URL aliases.
+package = Pro Drupal Development
+core = 7.x
+dependencies[] = path
+files[] = pathfinder.module

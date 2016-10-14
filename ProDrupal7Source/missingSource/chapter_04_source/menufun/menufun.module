@@ -1,0 +1,86 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Use this module to learn about Drupal's menu system.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function menufun_menu() {
+  $items['menufun/%/bar/baz'] = array(
+    'title' => 'Hi',
+    'page callback' => 'menufun_hello',
+    'page arguments' => array(1), // The matched wildcard.
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+/**
+ * Page callback.
+ */
+function menufun_hello($a = NULL, $b = NULL) {
+  return t('Hello. $a is @a and $b is @b', array('@a' => $a, '@b' => $b));
+}
+
+
+
+/**
+  * Implementation of hook_menu_alter().
+  *
+  * @param array $items
+  * Menu items keyed by path.
+  */
+function menufun_menu_alter(&$items) {
+  // Replace the page callback to 'user_logout' with a call to
+  // our own page callback.
+  $items['logout']['page callback'] = 'menufun_user_logout';
+  $items['logout']['access callback'] = 'user_is_logged_in';
+  // Drupal no longer has to load the user.pages.inc file
+  // since it will be calling our menufun_user_logout(), which
+  // is in our module -- and that's already in scope.
+  unset($items['logout']['file']);
+}
+
+/**
+ * Implementation of hook_link_alter().
+ *
+ * @param $item
+ * Associative array defining a menu link as passed into menu_link_save().
+ * @param $menu
+ * Associative array containing the menu router returned from
+ * menu_router_build().
+*/
+function menufun_menu_link_alter(&$item, $menu) {
+  if ($item['link_path'] == 'logout') {
+    $item['link_title'] = 'Sign off';
+  }
+}
+
+
+
+/**
+ * Menu callback; logs the current user out, and redirects to drupal.org.
+ * This is a modified version of user_logout().
+ */
+function menufun_user_logout() {
+  global $user;
+
+  watchdog('menufun', 'Session closed for %name.', array('%name' => $user->name));
+
+  // Destroy the current session:
+   session_destroy();
+  // Run the 'logout' operation of the user hook so modules can respond
+  // to the logout if they want to.
+  module_invoke_all('user', 'logout', NULL, $user);
+
+  // Load the anonymous user so the global $user object will be correct
+  // on any hook_exit() implementations.
+  $user = drupal_anonymous_user();
+
+  drupal_goto('http://drupal.org/');
+}
+
+

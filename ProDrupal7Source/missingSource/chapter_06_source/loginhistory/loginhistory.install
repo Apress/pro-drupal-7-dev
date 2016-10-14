@@ -1,0 +1,49 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Install, update and uninstall functions for the loginhistory module.
+ */
+
+
+/**
+ * Implements drupal_uninstall_schema().
+ */
+
+function loginhistory_uninstall() {
+  drupal_uninstall_schema('loginhistory');
+} 
+
+/**
+ * Implements hook_schema().
+ */
+function loginhistory_schema() {
+
+ $schema['login_history'] = array(
+  'description' => 'Stores information about user logins',
+  'fields' => array(
+    'uid' => array(
+      'description' => 'The User ID of the person who logged in',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'login' => array(
+      'description' => 'The Unix timestamp of when that person logged in',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+  ),
+  'indexes' => array(
+    'uid' => array('uid'),
+  ),
+);
+
+  return $schema;
+}
+
+
+
+

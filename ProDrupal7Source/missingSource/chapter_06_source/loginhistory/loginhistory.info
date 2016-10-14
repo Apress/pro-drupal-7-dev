@@ -1,0 +1,8 @@
+; $Id$
+name = Login History
+description = Keeps track of user logins.
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[] = loginhistory.install
+files[] = loginhistory.module

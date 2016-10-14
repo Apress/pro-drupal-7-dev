@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Use this module to learn about Drupal's menu system,
+ * specifically how local tasks work.
+ */
+
+/**
+ * Implementation of hook_perm().
+ */
+function milkshake_perm() {
+ return array('list flavors', 'add flavor');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function milkshake_menu() {
+  $items['milkshake'] = array(
+    'title' => 'Milkshake flavors',
+    'access arguments' => array('list flavors'),
+    'page callback' => 'milkshake_overview',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['milkshake/list'] = array(
+    'title' => 'List flavors',
+    'access arguments' => array('list flavors'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  );
+  $items['milkshake/add'] = array(
+    'title' => 'Add flavor',
+    'access arguments' => array('add flavor'),
+    'page callback' => 'milkshake_add',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['milkshake/list/fruity'] = array(
+    'title' => 'Fruity flavors',
+    'access arguments' => array('list flavors'),
+    'page callback' => 'milkshake_list',
+    'page arguments' => array(2), // Pass 'fruity'.
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['milkshake/list/candy'] = array(
+    'title' => 'Candy flavors',
+    'access arguments' => array('list flavors'),
+    'page callback' => 'milkshake_list',
+    'page arguments' => array(2), // Pass 'candy'.
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+  }
+
+  function milkshake_overview() {
+    $output = t('The following flavors are available...');
+    // ... more code here
+    return $output;
+  }
+
+  function milkshake_add() {
+    return t('A handy form to add flavors might go here...');
+  }
+
+  function milkshake_list($type) {
+    return t('List @type flavors', array('@type' => $type));
+  }

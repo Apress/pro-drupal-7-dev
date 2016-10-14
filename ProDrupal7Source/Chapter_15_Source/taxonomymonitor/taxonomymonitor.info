@@ -1,0 +1,7 @@
+; $Id$
+name = Taxonomy monitor
+description = "Sends an email when taxonomy changes."
+package = Pro Drupal Development
+core = 7.x
+files[] = taxonomymonitor.module
+php = 5.2

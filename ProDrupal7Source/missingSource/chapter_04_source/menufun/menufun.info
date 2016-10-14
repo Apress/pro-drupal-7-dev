@@ -1,0 +1,9 @@
+; $Id$
+name = Menu Fun
+description = Learning about the menu system.
+package = Pro Drupal Development
+version = VERSION
+core = 7.x
+files[] = menufun.module
+
+ver

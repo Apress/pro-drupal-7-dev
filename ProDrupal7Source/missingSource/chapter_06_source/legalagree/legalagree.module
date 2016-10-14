@@ -1,0 +1,51 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Support for dubious legal agreement during user registration.
+ */
+ 
+ 
+/**
+ *  Implementation of hook_form_alter().
+ */
+ function legalagree_form_alter(&$form, &$form_state, $form_id) {
+
+  if (!($form_id == 'user_register_form' || $form_id == 'user_profile_form')) {
+    return;
+  }
+  
+  $form['#validate'][] = 'legalagree_user_form_validate';
+
+
+  $form['account']['legal_agreement'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Legal Agreement')
+  );
+  
+  $form['account']['legal_agreement']['decision'] = array(
+        '#type' => 'radios',
+        '#description' => t('By registering at %site-name, you agree that
+at any time, we (or our surly, brutish henchmen) may enter your place of
+residence and smash your belongings with a ball-peen hammer.',
+array('%site-name' => variable_get('site_name', 'drupal'))),
+         '#default_value' => 0,
+         '#options' => array(t('I disagree'), t('I agree'))
+      );
+
+ } 
+
+
+function legalagree_user_form_validate($form, &$form_state) {
+
+  global $user;
+
+  if ($form_state['input']['decision'] <> 1) { 
+    form_set_error('decision', t('You must agree to the Legal Agreement before registration can be completed.'));
+  } else { 
+     watchdog('user', t('User %user agreed to legal terms', array('%user' => $user->name)));
+  }
+  
+}
+

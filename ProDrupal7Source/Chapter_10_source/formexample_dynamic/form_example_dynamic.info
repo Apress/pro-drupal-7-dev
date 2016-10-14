@@ -1,0 +1,7 @@
+; $Id$
+name = Form Example - Creating a Dynamic form
+description = An example of a dynamic form.
+package = Pro Drupal Development
+core = 7.x
+version = VERSION
+files[]=form_example_dynamic.module

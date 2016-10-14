@@ -1,0 +1,7 @@
+; $Id$
+name = Creative Juice
+description = "Adds a random sentence filter to content."
+package = Pro Drupal Development
+core = 7.x
+files[] = creativejuice.module
+php = 5.2

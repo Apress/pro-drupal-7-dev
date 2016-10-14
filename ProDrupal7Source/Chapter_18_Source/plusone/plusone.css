@@ -1,0 +1,17 @@
+div.plusone-widget {
+  width: 100px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+div.plusone-widget .score {
+  padding: 10px;
+  border: 1px solid #999;
+  background-color: #eee;
+  font-size: 175%;
+}
+div.plusone-widget .vote {
+  padding: 1px 5px;
+  margin-top: 2px;
+  border: 1px solid #666;
+  background-color: #ddd;
+}

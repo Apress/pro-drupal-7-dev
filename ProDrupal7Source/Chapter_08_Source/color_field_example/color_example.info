@@ -1,0 +1,9 @@
+
+name = Color Example
+description = A trivial implementation of a field to show the Field API
+package = Pro Drupal Development
+core = 7.x
+files[] = color_example.module
+files[] = color_example.test
+
+
